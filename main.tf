@@ -9,16 +9,9 @@ required_providers {
 
 # Configure the Microsoft Azure Provider
 provider "azurerm" {
-features {}
+    features {}
 }
 
 module "resource-groups" {
     source = "./resource-groups"
 }
-
-
-# module "virtual-networks" {
-#   source = "./virtual-networks"
-#   resource_group_name = module.resource_group.skillup.name
-#   resource_group_location = module.resource_group.skillup.location
-# }
