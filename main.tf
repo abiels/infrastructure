@@ -21,3 +21,7 @@ provider "azurerm" {
 module "resource-groups" {
     source = "./resource-groups"
 }
+
+module "container-registries" {
+    source = "./container-registries"
+}
