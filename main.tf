@@ -19,6 +19,6 @@ provider "azurerm" {
 
 module "resource-groups" {
   source              = "./resource-groups"
-  resource_group_name = format("rg_%s", local.prefix)
-  resource_location   = local.location
+  resource_group_name = format("rg_%s", var.prefix)
+  resource_location   = var.location
 }

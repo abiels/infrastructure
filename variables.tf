@@ -1,4 +1,8 @@
-locals {
-  prefix   = "abiels"
-  location = "West Europe"
+variable "prefix" {
+  type    = string
+  default = "abiels"
+}
+variable "location" {
+  type    = string
+  default = "West Europe"
 }
