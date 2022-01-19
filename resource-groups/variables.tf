@@ -1,9 +1,7 @@
 variable "resource_group_name" {
-  type        = string
-  default     = "rg_abiels"
+  type = string
 }
 
 variable "resource_location" {
-  type        = string
-  default     = "West Europe"
+  type = string
 }
