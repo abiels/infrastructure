@@ -1,3 +1,8 @@
-variable github_token {
-  #stored in the secrets.tfvars
+variable "prefix" {
+  type    = string
+  default = "abiels"
+}
+variable "location" {
+  type    = string
+  default = "West Europe"
 }
