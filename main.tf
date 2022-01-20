@@ -32,5 +32,4 @@ module "key-vault" {
   prefix                    = var.prefix
   resource_group_name       = format("rg_%s", var.prefix)
   resource_location         = var.location
-  enable_rbac_authorization = var.enable_rbac_authorization
 }

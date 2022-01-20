@@ -7,6 +7,3 @@ variable "resource_location" {
 variable "prefix" {
   type = string
 }
-variable "enable_rbac_authorization" {
-  type = bool
-}
