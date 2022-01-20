@@ -7,6 +7,8 @@ variable "location" {
   default = "West Europe"
 }
 variable "allowed_ips" {
-  type = list(any)
-  default = ["109.251.247.244"]
+  type = map(any)
+  default = {
+    abiels = "109.251.247.244/32"
+  }
 }
