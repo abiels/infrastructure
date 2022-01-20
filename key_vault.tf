@@ -1,7 +1,7 @@
 resource "azurerm_key_vault" "key-vault" {
-  name                        = format("kv-%s", var.prefix)
+  name                        = format("%s-%s-kv", var.prefix, terraform.workspace)
   location                    = var.location
-  resource_group_name         = format("rg_%s", var.prefix)
+  resource_group_name         = format("%s-%s-rg", var.prefix, terraform.workspace)
   enabled_for_disk_encryption = true
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   soft_delete_retention_days  = 7

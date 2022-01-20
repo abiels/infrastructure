@@ -25,6 +25,6 @@ data "azurerm_client_config" "current" {}
 
 module "resource-groups" {
   source              = "./resource-groups"
-  resource_group_name = format("rg_%s", var.prefix)
+  resource_group_name = format("%s-%s-rg", var.prefix, terraform.workspace)
   resource_location   = var.location
 }
