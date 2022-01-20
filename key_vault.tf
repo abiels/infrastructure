@@ -1,7 +1,12 @@
+resource "random_integer" "key-vault" {
+  min = 001
+  max = 500
+}
+
 resource "azurerm_key_vault" "key-vault" {
-  name                        = format("kv-%s", var.prefix)
+  name                        = format("%s-%s-rg-%s", var.prefix, terraform.workspace, random_integer.key-vault.id )
   location                    = var.location
-  resource_group_name         = format("rg_%s", var.prefix)
+  resource_group_name         = var.resource_group_name
   enabled_for_disk_encryption = true
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   soft_delete_retention_days  = 7
