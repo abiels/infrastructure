@@ -4,7 +4,7 @@ resource "random_integer" "key-vault" {
 }
 
 resource "azurerm_key_vault" "key-vault" {
-  name                        = format("%s-%s-rg-%s", var.prefix, terraform.workspace, random_integer.key-vault.id )
+  name                        = format("%s-%s-rg-%s", var.prefix, terraform.workspace, random_integer.key-vault.id)
   location                    = var.location
   resource_group_name         = var.resource_group_name
   enabled_for_disk_encryption = true
