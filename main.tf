@@ -24,10 +24,6 @@ provider "azurerm" {
 data "azurerm_client_config" "current" {
 }
 
-output "account_id" {
-  value = data.azurerm_client_config.current.client_id
-}
-
 resource "azurerm_key_vault" "key-vault" {
   name                        = format("kv-%s", var.prefix)
   location                    = var.location
