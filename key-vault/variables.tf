@@ -7,3 +7,6 @@ variable "resource_location" {
 variable "prefix" {
   type = string
 }
+variable "allowed_ips" {
+  type = list(any)
+}

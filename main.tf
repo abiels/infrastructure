@@ -32,4 +32,5 @@ module "key-vault" {
   prefix                    = var.prefix
   resource_group_name       = format("rg_%s", var.prefix)
   resource_location         = var.location
+  allowed_ips               = var.allowed_ips
 }

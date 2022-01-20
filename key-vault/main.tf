@@ -15,4 +15,10 @@ resource "azurerm_key_vault" "key-vault" {
   purge_protection_enabled    = false
   sku_name                    = "standard"
   enable_rbac_authorization   = true
+  
+  network_acls {
+    bypass = "AzureServices"
+    default_action = "Deny"
+    ip_rules = var.allowed_ips
+  }
 }
