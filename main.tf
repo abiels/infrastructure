@@ -21,16 +21,33 @@ provider "azurerm" {
   }
 }
 
+data "azurerm_client_config" "current" {
+}
+
+output "account_id" {
+  value = data.azurerm_client_config.current.client_id
+}
+
+resource "azurerm_key_vault" "key-vault" {
+  name                        = format("kv-%s", var.prefix)
+  location                    = var.location
+  resource_group_name         = format("rg_%s", var.prefix)
+  enabled_for_disk_encryption = true
+  tenant_id                   = data.azurerm_client_config.current.tenant_id
+  soft_delete_retention_days  = 7
+  purge_protection_enabled    = false
+  sku_name                    = "standard"
+  enable_rbac_authorization   = true
+  
+  network_acls {
+    bypass = "AzureServices"
+    default_action = "Deny"
+    ip_rules = var.allowed_ips
+  }
+}
+
 module "resource-groups" {
   source              = "./resource-groups"
   resource_group_name = format("rg_%s", var.prefix)
   resource_location   = var.location
-}
-
-module "key-vault" {
-  source                    = "./key-vault"
-  prefix                    = var.prefix
-  resource_group_name       = format("rg_%s", var.prefix)
-  resource_location         = var.location
-  allowed_ips               = var.allowed_ips
 }
