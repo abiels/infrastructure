@@ -34,5 +34,5 @@ module "container-registry" {
   resource_group_name = var.resource_group_name
   resource_location   = var.location
   prefix              = var.prefix
-  allowed_ips         = var.allowed_ips.abiels
+  allowed_ips         = var.allowed_ips
 }

@@ -8,5 +8,5 @@ variable "prefix" {
   type = string
 }
 variable "allowed_ips" {
-  type = string
+  type = map(string)
 }
