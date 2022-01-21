@@ -6,7 +6,7 @@ resource "random_integer" "acr" {
 resource "azurerm_container_registry" "acr" {
   name                          = format("%s%srg%s", var.prefix, terraform.workspace, random_integer.acr.id)
   resource_group_name           = var.resource_group_name
-  location                      = var.resource_location
+  location                      = var.location
   sku                           = "Premium"
   public_network_access_enabled = true
 
