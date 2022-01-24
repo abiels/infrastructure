@@ -4,7 +4,7 @@ resource "random_integer" "acr" {
 }
 
 resource "azurerm_container_registry" "acr" {
-  name                          = format("%s%srg%s", var.prefix, terraform.workspace, random_integer.acr.id)
+  name                          = format("%s%scr%s", var.prefix, terraform.workspace, random_integer.acr.id)
   resource_group_name           = var.resource_group_name
   location                      = var.location
   sku                           = "Premium"
