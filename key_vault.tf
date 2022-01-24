@@ -4,7 +4,7 @@ resource "random_integer" "key-vault" {
 }
 
 resource "azurerm_key_vault" "key-vault" {
-  name                        = format("%s-%s-rg-%s", var.prefix, terraform.workspace, random_integer.key-vault.id)
+  name                        = format("%s-%s-kv-%s", var.prefix, terraform.workspace, random_integer.key-vault.id)
   location                    = var.location
   resource_group_name         = var.resource_group_name
   enabled_for_disk_encryption = true
@@ -17,6 +17,6 @@ resource "azurerm_key_vault" "key-vault" {
   network_acls {
     bypass         = "AzureServices"
     default_action = "Deny"
-    ip_rules       = [var.allowed_ips.abiels]
+    ip_rules       = [for ip in var.allowed_ips :ip]
   }
 }
