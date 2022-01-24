@@ -17,6 +17,6 @@ resource "azurerm_key_vault" "key-vault" {
   network_acls {
     bypass         = "AzureServices"
     default_action = "Deny"
-    ip_rules       = [var.allowed_ips.abiels]
+    ip_rules       = [for ip in var.allowed_ips :ip]
   }
 }
