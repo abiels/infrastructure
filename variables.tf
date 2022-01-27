@@ -29,3 +29,16 @@ variable "backand_http_protocol" {
   type    = string
   default = "http"
 }
+
+
+variable "vnet_address_space" {
+  type    = string
+  default = "10.0.0.0/16"
+}
+variable "subnets" {
+  type = map(string)
+  default = {
+    app   = "10.0.1.0/24"
+    test1 = "10.0.2.0/24"
+  }
+}
