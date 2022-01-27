@@ -7,10 +7,10 @@ resource "azurerm_virtual_network" "vnet" {
 
 resource "azurerm_subnet" "subnet" {
   for_each=var.subnets
-  name                 = format("%s-%s-subnet-%s-%s", var.prefix, terraform.workspace, each.key, random_integer.vnet.id)
+  name                 = format("%s-%s-subnet-%s-%s", var.prefix, terraform.workspace, each.value.name, random_integer.vnet.id)
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = [each.value]
+  address_prefixes     = [each.value.addr_range]
 }
 
 

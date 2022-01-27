@@ -17,26 +17,19 @@ variable "resource_group_name" {
   type    = string
   default = "abiels-dev-rg-001"
 }
-variable "backend_http_patch" {
-  type    = string
-  default = "/"
-}
-variable "backend_http_port" {
-  type    = number
-  default = 80
-}
-variable "backand_http_protocol" {
-  type    = string
-  default = "http"
-}
-
 variable "vnet_address_space" {
   type    = string
   default = "10.0.0.0/16"
 }
 variable "subnets" {
-  type = map(string)
+  type = map(object({
+    name    = string
+    addr_range = string
+  }))
   default = {
-    app   = "10.0.1.0/24"
+    "app" = {
+      name    = "app"
+      addr_range = "10.0.1.0/24"
+    }
   }
 }
