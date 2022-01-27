@@ -17,3 +17,15 @@ variable "resource_group_name" {
   type    = string
   default = "abiels-dev-rg-001"
 }
+variable "backend_http_patch" {
+  type    = string
+  default = "/"
+}
+variable "backend_http_port" {
+  type    = number
+  default = 80
+}
+variable "backand_http_protocol" {
+  type    = string
+  default = "http"
+}
