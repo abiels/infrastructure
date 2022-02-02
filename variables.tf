@@ -33,3 +33,28 @@ variable "subnets" {
     }
   }
 }
+variable "postrgesql" {
+  type = map(object({
+    name                    = string
+    size                    = string
+    databases               = list(string)
+    backup                  = bool
+    threat_detection_policy = bool
+  }))
+  default = {
+    "dev" = {
+      name                    = "development"
+      size                    = "B_Gen5_1"
+      databases               = ["dev-db1", "dev-db2"]
+      backup                  = false
+      threat_detection_policy = false
+    },
+    "prod" = {
+      name                    = "production"
+      size                    = "B_Gen5_1"
+      databases               = ["prod-db1", "prod-db2"]
+      backup                  = true
+      threat_detection_policy = true
+    }
+  }
+}

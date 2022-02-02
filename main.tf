@@ -37,3 +37,12 @@ module "virtual-network" {
   vnet_address_space  = var.vnet_address_space
   subnets             = var.subnets
 }
+
+module "postgresql" {
+  source              = "./postgresql"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  prefix              = var.prefix
+  postrgesql          = var.postrgesql
+  allowed_ips         = var.allowed_ips
+}
