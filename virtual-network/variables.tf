@@ -12,7 +12,7 @@ variable "vnet_address_space" {
 }
 variable "subnets" {
   type = map(object({
-    name    = string
+    name       = string
     addr_range = string
   }))
 }

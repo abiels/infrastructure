@@ -23,12 +23,12 @@ variable "vnet_address_space" {
 }
 variable "subnets" {
   type = map(object({
-    name    = string
+    name       = string
     addr_range = string
   }))
   default = {
     "app" = {
-      name    = "app"
+      name       = "app"
       addr_range = "10.0.1.0/24"
     }
   }
