@@ -17,3 +17,19 @@ variable "resource_group_name" {
   type    = string
   default = "abiels-dev-rg-001"
 }
+variable "vnet_address_space" {
+  type    = string
+  default = "10.0.0.0/16"
+}
+variable "subnets" {
+  type = map(object({
+    name    = string
+    addr_range = string
+  }))
+  default = {
+    "app" = {
+      name    = "app"
+      addr_range = "10.0.1.0/24"
+    }
+  }
+}
