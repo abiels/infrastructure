@@ -40,6 +40,9 @@ variable "postrgesql" {
     databases               = list(string)
     backup                  = bool
     threat_detection_policy = bool
+    storage_size            = number
+    engine_version          = string
+    backup_retention_days   = number
   }))
   default = {
     "dev" = {
@@ -48,6 +51,9 @@ variable "postrgesql" {
       databases               = ["dev-db1", "dev-db2"]
       backup                  = false
       threat_detection_policy = false
+      storage_size            = 5120
+      engine_version          = 11
+      backup_retention_days   = 7
     },
     "prod" = {
       name                    = "production"
@@ -55,6 +61,9 @@ variable "postrgesql" {
       databases               = ["prod-db1", "prod-db2"]
       backup                  = true
       threat_detection_policy = true
+      storage_size            = 5120
+      engine_version          = 11
+      backup_retention_days   = 7
     }
   }
 }

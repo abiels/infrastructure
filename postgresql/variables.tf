@@ -16,6 +16,9 @@ variable "postrgesql" {
     databases               = list(string)
     backup                  = bool
     threat_detection_policy = bool
+    storage_size            = number
+    engine_version          = string
+    backup_retention_days   = number
   }))
 }
 
