@@ -20,3 +20,10 @@ resource "azurerm_key_vault" "key-vault" {
     ip_rules       = [for ip in var.allowed_ips : ip]
   }
 }
+
+resource "azurerm_role_assignment" "role-secret-officer" {
+  for_each             = var.secret_officers
+  role_definition_name = "Key Vault Secrets Officer"
+  principal_id         = each.value
+  scope                = azurerm_key_vault.key-vault.id
+}

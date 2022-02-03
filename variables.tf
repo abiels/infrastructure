@@ -67,3 +67,7 @@ variable "postrgesql" {
     }
   }
 }
+variable "secret_officers" {
+  type    = map(string)
+  default = { abiels = "916cbac1-db2e-433c-9842-3b24ce2570d2" }
+}

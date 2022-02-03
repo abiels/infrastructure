@@ -43,6 +43,15 @@ module "postgresql" {
   resource_group_name = var.resource_group_name
   location            = var.location
   prefix              = var.prefix
-  postrgesql          = var.postrgesql
+  for_each            = var.postrgesql
+  postrgesql          = each.value
   allowed_ips         = var.allowed_ips
+  username            = "pgadmin"
+  password            = random_password.password.result
+}
+
+resource "random_password" "password" {
+  length           = 24
+  special          = true
+  override_special = "%@!"
 }
