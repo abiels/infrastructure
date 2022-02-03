@@ -33,7 +33,7 @@ variable "subnets" {
     }
   }
 }
-variable "postrgesql" {
+variable "postgresql" {
   type = map(object({
     name                    = string
     size                    = string

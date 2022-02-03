@@ -40,11 +40,11 @@ module "virtual-network" {
 
 module "postgresql" {
   source              = "./postgresql"
+  for_each            = var.postgresql
+  postgresql          = each.value
   resource_group_name = var.resource_group_name
   location            = var.location
   prefix              = var.prefix
-  for_each            = var.postrgesql
-  postrgesql          = each.value
   allowed_ips         = var.allowed_ips
   username            = "pgadmin"
   password            = random_password.password.result
