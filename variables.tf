@@ -33,40 +33,18 @@ variable "subnets" {
     }
   }
 }
-variable "postgresql" {
-  type = map(object({
-    name                    = string
-    size                    = string
-    databases               = list(string)
-    backup                  = bool
-    threat_detection_policy = bool
-    storage_size            = number
-    engine_version          = string
-    backup_retention_days   = number
-  }))
-  default = {
-    "dev" = {
-      name                    = "development"
-      size                    = "B_Gen5_1"
-      databases               = ["dev-db1", "dev-db2"]
-      backup                  = false
-      threat_detection_policy = false
-      storage_size            = 5120
-      engine_version          = 11
-      backup_retention_days   = 7
-    },
-    "prod" = {
-      name                    = "production"
-      size                    = "B_Gen5_1"
-      databases               = ["prod-db1", "prod-db2"]
-      backup                  = true
-      threat_detection_policy = true
-      storage_size            = 5120
-      engine_version          = 11
-      backup_retention_days   = 7
-    }
-  }
-}
+# variable "postgresql" {
+#   type = map(object({
+#     name                    = string
+#     size                    = string
+#     databases               = list(string)
+#     backup                  = bool
+#     threat_detection_policy = bool
+#     storage_size            = number
+#     engine_version          = string
+#     backup_retention_days   = number
+#   }))
+# }
 variable "secret_officers" {
   type    = map(string)
   default = { abiels = "916cbac1-db2e-433c-9842-3b24ce2570d2" }
