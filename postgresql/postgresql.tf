@@ -34,6 +34,43 @@ resource "azurerm_postgresql_database" "database" {
   collation           = "English_United States.1252"
 }
 
+resource "azurerm_data_protection_backup_vault" "backup_vaul" {
+  name                = format("%s-%s-backup-vault-pgsql", var.prefix, terraform.workspace)
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  datastore_type      = "VaultStore"
+  redundancy          = "LocallyRedundant"
+  identity {
+    type = "SystemAssigned"
+  }
+}
+
+resource "azurerm_data_protection_backup_policy_postgresql" "backup_policy" {
+  name                            = format("%s-%s-daily-backup-policy-%s", var.prefix, terraform.workspace, var.postgresql.name)
+  resource_group_name             = var.resource_group_name
+  vault_name                      = azurerm_data_protection_backup_vault.backup_vaul.name
+  backup_repeating_time_intervals = ["R/2022-02-02T02:30:00+00:00/P1D"]
+  default_retention_duration      = "P3M"
+}
+
+resource "azurerm_role_assignment" "role_assignment" {
+  count                = var.postgresql.backup ? 1 : 0
+  scope                = azurerm_postgresql_server.pgsql_instance.id
+  role_definition_name = "Reader"
+  principal_id         = azurerm_data_protection_backup_vault.backup_vaul.identity.0.principal_id
+  depends_on = [
+    azurerm_data_protection_backup_vault.backup_vaul
+  ]
+}
+
+# resource "azurerm_data_protection_backup_instance_postgresql" "backup_instance_postgresql" {
+#   name                                    = "backup_instance_postgresql"
+#   location                                = var.location
+#   vault_id                                = azurerm_data_protection_backup_vault.backup_vaul.id
+#   database_id                             = azurerm_postgresql_database.database.id
+#   backup_policy_id                        = azurerm_data_protection_backup_policy_postgresql.backup_policy.id
+# }
+
 
 #random
 resource "random_integer" "postgresql_server" {
