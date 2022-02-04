@@ -1,18 +1,18 @@
 resource "azurerm_postgresql_server" "pgsql_instance" {
-  name                = format("%s-%s-pgsql-%s-%s", var.prefix, terraform.workspace, var.postrgesql.name, random_integer.postgresql_server.id)
+  name                = format("%s-%s-pgsql-%s-%s", var.prefix, terraform.workspace, var.postgresql.name, random_integer.postgresql_server.id)
   location            = var.location
   resource_group_name = var.resource_group_name
 
-  sku_name = var.postrgesql.size
+  sku_name = var.postgresql.size
 
-  storage_mb                   = var.postrgesql.storage_size
-  backup_retention_days        = var.postrgesql.backup_retention_days
+  storage_mb                   = var.postgresql.storage_size
+  backup_retention_days        = var.postgresql.backup_retention_days
   geo_redundant_backup_enabled = false
   auto_grow_enabled            = true
 
   administrator_login          = var.username
   administrator_login_password = var.password
-  version                      = var.postrgesql.engine_version
+  version                      = var.postgresql.engine_version
   ssl_enforcement_enabled      = true
 }
 
@@ -26,7 +26,7 @@ resource "azurerm_postgresql_firewall_rule" "firewall" {
 }
 
 resource "azurerm_postgresql_database" "database" {
-  for_each            = toset(var.postrgesql.databases)
+  for_each            = toset(var.postgresql.databases)
   name                = each.value
   resource_group_name = var.resource_group_name
   server_name         = azurerm_postgresql_server.pgsql_instance.name

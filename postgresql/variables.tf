@@ -7,7 +7,7 @@ variable "location" {
 variable "prefix" {
   type = string
 }
-variable "postrgesql" {
+variable "postgresql" {
 }
 variable "allowed_ips" {
   type = map(string)
