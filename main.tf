@@ -37,3 +37,59 @@ module "virtual-network" {
   vnet_address_space  = var.vnet_address_space
   subnets             = var.subnets
 }
+
+module "postgresql_development" {
+  source = "./postgresql"
+  name   = "development"
+  sku    = "B_Gen5_1"
+  databases = {
+    dev-db1 = { name = "dev-db1",
+                charset = "UTF8",
+                collation = "English_United States.1252" },
+    dev-db2 = { name = "dev-db2",
+                charset = "UTF8",
+                collation = "English_United States.1252" }
+  }
+  backup                  = false
+  threat_detection_policy = false
+  storage_size            = 5120
+  engine_version          = 11
+  backup_retention_days   = 7
+  username                = "pgadmin"
+  password                = random_password.password.result
+  resource_group_name     = var.resource_group_name
+  location                = var.location
+  prefix                  = var.prefix
+  allowed_ips             = var.allowed_ips
+}
+
+module "postgresql_production" {
+  source                  = "./postgresql"
+  name                    = "production"
+  sku                     = "B_Gen5_1"
+  databases = {
+    prod-db1 = { name = "prod-db1",
+                charset = "UTF8",
+                collation = "English_United States.1252" },
+    prod-db2 = { name = "prod-db2",
+                charset = "UTF8",
+                collation = "English_United States.1252" }
+  }
+  backup                  = true
+  threat_detection_policy = false
+  storage_size            = 5120
+  engine_version          = 11
+  backup_retention_days   = 7
+  username                = "pgadmin"
+  password                = random_password.password.result
+  resource_group_name     = var.resource_group_name
+  location                = var.location
+  prefix                  = var.prefix
+  allowed_ips             = var.allowed_ips
+}
+
+resource "random_password" "password" {
+  length           = 24
+  special          = true
+  override_special = "%@!"
+}

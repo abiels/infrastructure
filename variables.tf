@@ -33,3 +33,19 @@ variable "subnets" {
     }
   }
 }
+# variable "postgresql" {
+#   type = map(object({
+#     name                    = string
+#     size                    = string
+#     databases               = list(string)
+#     backup                  = bool
+#     threat_detection_policy = bool
+#     storage_size            = number
+#     engine_version          = string
+#     backup_retention_days   = number
+#   }))
+# }
+variable "secret_officers" {
+  type    = map(string)
+  default = { abiels = "916cbac1-db2e-433c-9842-3b24ce2570d2" }
+}
