@@ -95,6 +95,7 @@ resource "random_password" "password" {
 }
 
 module "virtual-machine-linux" {
+  count = 0
   source                       = "./virtual-machine-linux"
   resource_group_name          = var.resource_group_name
   location                     = var.location
@@ -123,36 +124,8 @@ module "virtual-machine-linux" {
   }
 }
 
-module "virtual-machine-linux" {
-  source                       = "./virtual-machine-linux"
-  os_disk_storage_account_type = "Standard_LRS"
-  vm_size                      = "Standard_DS1_v2"
-  os_username                  = "azureuser"
-  subnet_name                  = "abiels-dev-subnet-app-8"
-  network_name                 = "abiels-dev-vnet-8"
-  source_image_reference = {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
-    version   = "latest"
-  }
-  network_security_rules = { ssh = {
-    name                       = "SSH"
-    priority                   = 1001
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "22"
-    source_address_prefix      = "109.251.247.244"
-    destination_address_prefix = "*"}
-  }
-  resource_group_name          = var.resource_group_name
-  location                     = var.location
-  prefix                       = var.prefix
-}
-
 module "virtual-machine-windows" {
+  count = 0
   source                       = "./virtual-machine-windows"
   os_username                  = "win-admin-rYoYC7pb6LRq1RXx"
   os_password                  = random_password.password.result

@@ -64,8 +64,8 @@ resource "azurerm_network_interface" "network_interface" {
   }
 }
 
-# Connect the security group to the network interface
-resource "azurerm_network_interface_security_group_association" "example" {
+# # Connect the security group to the network interface
+resource "azurerm_network_interface_security_group_association" "security_group_association" {
   network_interface_id      = azurerm_network_interface.network_interface.id
   network_security_group_id = azurerm_network_security_group.security_group.id
 }
