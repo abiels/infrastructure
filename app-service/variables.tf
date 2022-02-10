@@ -7,12 +7,6 @@ variable "location" {
 variable "prefix" {
   type = string
 }
-variable "sku_tier" {
-  type = string
-}
-variable "sku_size" {
-  type = string
-}
 variable "service_name" {
   type = string
 }
@@ -26,5 +20,8 @@ variable "health_check_path" {
   type = string
 }
 variable "health_check_max_ping_failures" {
+  type = string
+}
+variable "app_service_plan_id" {
   type = string
 }
