@@ -93,3 +93,16 @@ resource "random_password" "password" {
   special          = true
   override_special = "%@!"
 }
+
+module "app-service" {
+  source                    = "./app-service"
+  sku_tier                  = "Standard"
+  sku_size                  = "S1"
+  service_name              = "catalogapp"
+  use_32_bit_worker_process = true 
+  dotnet_framework_version  = "v4.0"
+  scm_type                  = "LocalGit"
+  resource_group_name       = var.resource_group_name
+  location                  = var.location
+  prefix                    = var.prefix
+}
