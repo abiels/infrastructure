@@ -95,13 +95,15 @@ resource "random_password" "password" {
 }
 
 module "app-service-getting-started" {
-  source                    = "./app-service"
-  sku_tier                  = "Standard"
-  sku_size                  = "S1"
-  service_name              = "getting-started"
-  image                     = "docker/getting-started"
-  image_version             = "latest"
-  resource_group_name       = var.resource_group_name
-  location                  = var.location
-  prefix                    = var.prefix
+  source                         = "./app-service"
+  sku_tier                       = "Standard"
+  sku_size                       = "S1"
+  service_name                   = "getting-started"
+  image                          = "docker/getting-started"
+  image_version                  = "latest"
+  health_check_path              = "/"
+  health_check_max_ping_failures = "2"
+  resource_group_name            = var.resource_group_name
+  location                       = var.location
+  prefix                         = var.prefix
 }

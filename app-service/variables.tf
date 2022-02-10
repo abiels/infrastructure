@@ -22,3 +22,9 @@ variable "image" {
 variable "image_version" {
   type = string
 }
+variable "health_check_path" {
+  type = string
+}
+variable "health_check_max_ping_failures" {
+  type = string
+}

@@ -18,8 +18,12 @@ resource "azurerm_app_service" "app-service" {
   app_service_plan_id = azurerm_app_service_plan.service_plan.id
 
   site_config {
-    linux_fx_version = format("DOCKER|%s:%s", var.image, var.image_version)
-    always_on        = "true"
+    linux_fx_version  = format("DOCKER|%s:%s", var.image, var.image_version)
+    always_on         = "true"
+    health_check_path = var.health_check_path
+  }
+  app_settings = {
+    "WEBSITE_HEALTHCHECK_MAXPINGFAILURES" = var.health_check_max_ping_failures
   }
 }
 
