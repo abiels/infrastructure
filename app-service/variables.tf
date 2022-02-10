@@ -16,12 +16,9 @@ variable "sku_size" {
 variable "service_name" {
   type = string
 }
-variable use_32_bit_worker_process {
-  type = bool
-}
-variable dotnet_framework_version  {
+variable "image" {
   type = string
 }
-variable scm_type {
+variable image_version {
   type = string
 }

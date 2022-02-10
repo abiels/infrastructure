@@ -94,14 +94,13 @@ resource "random_password" "password" {
   override_special = "%@!"
 }
 
-module "app-service" {
+module "app-service-getting-started" {
   source                    = "./app-service"
   sku_tier                  = "Standard"
   sku_size                  = "S1"
-  service_name              = "catalogapp"
-  use_32_bit_worker_process = true 
-  dotnet_framework_version  = "v4.0"
-  scm_type                  = "LocalGit"
+  service_name              = "getting-started"
+  image                     = "docker/getting-started"
+  image_version             = "latest"
   resource_group_name       = var.resource_group_name
   location                  = var.location
   prefix                    = var.prefix
