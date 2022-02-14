@@ -44,11 +44,11 @@ module "postgresql_development" {
   sku    = "B_Gen5_1"
   databases = {
     dev-db1 = { name = "dev-db1",
-                charset = "UTF8",
-                collation = "English_United States.1252" },
+    charset = "UTF8",
+    collation = "English_United States.1252" },
     dev-db2 = { name = "dev-db2",
-                charset = "UTF8",
-                collation = "English_United States.1252" }
+    charset = "UTF8",
+    collation = "English_United States.1252" }
   }
   backup                  = false
   threat_detection_policy = false
@@ -64,16 +64,16 @@ module "postgresql_development" {
 }
 
 module "postgresql_production" {
-  source                  = "./postgresql"
-  name                    = "production"
-  sku                     = "B_Gen5_1"
+  source = "./postgresql"
+  name   = "production"
+  sku    = "B_Gen5_1"
   databases = {
     prod-db1 = { name = "prod-db1",
-                charset = "UTF8",
-                collation = "English_United States.1252" },
+    charset = "UTF8",
+    collation = "English_United States.1252" },
     prod-db2 = { name = "prod-db2",
-                charset = "UTF8",
-                collation = "English_United States.1252" }
+    charset = "UTF8",
+    collation = "English_United States.1252" }
   }
   backup                  = true
   threat_detection_policy = false
@@ -92,4 +92,44 @@ resource "random_password" "password" {
   length           = 24
   special          = true
   override_special = "%@!"
+}
+
+resource "azurerm_app_service_plan" "default" {
+  name                = format("%s-%s-app-service-plan-%s", var.prefix, terraform.workspace, random_integer.app_service_plan.id)
+  kind                = "Linux"
+  reserved            = true
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  sku {
+    tier = var.azurerm_app_service_sku_tier
+    size = var.azurerm_app_service_sku_size
+  }
+}
+
+module "app-service" {
+  source                         = "./app-service"
+  app_service_plan_id            = azurerm_app_service_plan.default.id
+  for_each = {
+    nginx = {
+     service_name                    = "nginx"
+     image                           = "nginx"
+     image_version                   = "latest"
+     health_check_path               = "/"
+     health_check_max_ping_failures  = "2"},
+    getting-started = {
+     service_name = "getting-started"
+     image                           = "docker/getting-started"
+     image_version                   = "latest"
+     health_check_path               = "/"
+     health_check_max_ping_failures  = "2" 
+    }
+  }
+  service_name                   = each.value.service_name
+  image                          = each.value.image
+  image_version                  = each.value.image_version
+  health_check_path              = each.value.health_check_path
+  health_check_max_ping_failures = each.value.health_check_max_ping_failures
+  resource_group_name            = var.resource_group_name
+  location                       = var.location
+  prefix                         = var.prefix
 }
