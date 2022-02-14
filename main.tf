@@ -109,19 +109,26 @@ resource "azurerm_app_service_plan" "default" {
 module "app-service" {
   source                         = "./app-service"
   app_service_plan_id            = azurerm_app_service_plan.default.id
-  services = {
-    nginx = {service_name            = "nginx"
+  for_each = {
+    nginx = {
+     service_name                    = "nginx"
      image                           = "nginx"
      image_version                   = "latest"
      health_check_path               = "/"
      health_check_max_ping_failures  = "2"},
-    getting-started =  {service_name = "getting-started"
+    getting-started = {
+     service_name = "getting-started"
      image                           = "docker/getting-started"
      image_version                   = "latest"
      health_check_path               = "/"
      health_check_max_ping_failures  = "2" 
     }
   }
+  service_name                   = each.value.service_name
+  image                          = each.value.image
+  image_version                  = each.value.image_version
+  health_check_path              = each.value.health_check_path
+  health_check_max_ping_failures = each.value.health_check_max_ping_failures
   resource_group_name            = var.resource_group_name
   location                       = var.location
   prefix                         = var.prefix

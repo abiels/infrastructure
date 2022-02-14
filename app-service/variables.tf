@@ -10,12 +10,20 @@ variable "prefix" {
 variable "app_service_plan_id" {
   type = string
 }
-variable "services" {
-  type = map(object({
-    service_name                   = string
-    image                          = string
-    image_version                  = string
-    health_check_path              = string
-    health_check_max_ping_failures = string
-  }))
+variable "service_name" {
+  type = string
+}
+variable "image" {
+  type = string
+}
+variable "image_version" {
+  type = string
+}
+variable "health_check_path" {
+  type = string
+  default = "/"
+}
+variable "health_check_max_ping_failures" {
+  type = string
+  default = "2"
 }
