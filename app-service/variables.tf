@@ -7,21 +7,21 @@ variable "location" {
 variable "prefix" {
   type = string
 }
-variable "service_name" {
+variable "app_plan_name" {
   type = string
 }
-variable "image" {
+variable "sku_tier" {
   type = string
 }
-variable "image_version" {
+variable "sku_size" {
   type = string
 }
-variable "health_check_path" {
-  type = string
-}
-variable "health_check_max_ping_failures" {
-  type = string
-}
-variable "app_service_plan_id" {
-  type = string
+variable "services" {
+  type = map(object({
+    service_name                   = string
+    image                          = string
+    image_version                  = string
+    health_check_path              = string
+    health_check_max_ping_failures = string
+  }))
 }
