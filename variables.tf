@@ -25,26 +25,21 @@ variable "subnets" {
   type = map(object({
     name       = string
     addr_range = string
+    service_endpoints = list(string)
   }))
   default = {
     "app" = {
       name       = "app"
       addr_range = "10.0.1.0/24"
+      service_endpoints = []
+    },
+    "gateway" = {
+      name       = "gateway"
+      addr_range = "10.0.2.0/24"
+      service_endpoints = ["Microsoft.Web"]
     }
   }
 }
-# variable "postgresql" {
-#   type = map(object({
-#     name                    = string
-#     size                    = string
-#     databases               = list(string)
-#     backup                  = bool
-#     threat_detection_policy = bool
-#     storage_size            = number
-#     engine_version          = string
-#     backup_retention_days   = number
-#   }))
-# }
 variable "secret_officers" {
   type    = map(string)
   default = { abiels = "916cbac1-db2e-433c-9842-3b24ce2570d2" }

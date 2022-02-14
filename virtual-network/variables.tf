@@ -14,5 +14,6 @@ variable "subnets" {
   type = map(object({
     name       = string
     addr_range = string
+    service_endpoints = list(string)
   }))
 }

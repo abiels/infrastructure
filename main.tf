@@ -115,21 +115,130 @@ module "app-service" {
      image                           = "nginx"
      image_version                   = "latest"
      health_check_path               = "/"
-     health_check_max_ping_failures  = "2"},
+     health_check_max_ping_failures  = "2"
+     ip_restriction                  = {
+       100 = {
+          priority                  = 100
+          action                    = "Allow"
+          name                      = "app-gw"
+          virtual_network_subnet_id = "/subscriptions/a0428382-057e-415e-b01f-0eb0d6b4fbc8/resourceGroups/abiels-dev-rg-001/providers/Microsoft.Network/virtualNetworks/abiels-dev-vnet-8/subnets/abiels-dev-subnet-gateway-8"
+        }
+     }
+     },
     getting-started = {
      service_name = "getting-started"
      image                           = "docker/getting-started"
      image_version                   = "latest"
      health_check_path               = "/"
-     health_check_max_ping_failures  = "2" 
-    }
+     health_check_max_ping_failures  = "2"
+     ip_restriction                  = {
+       100 = {
+          priority                  = 100
+          action                    = "Allow"
+          name                      = "app-gw"
+          virtual_network_subnet_id = "/subscriptions/a0428382-057e-415e-b01f-0eb0d6b4fbc8/resourceGroups/abiels-dev-rg-001/providers/Microsoft.Network/virtualNetworks/abiels-dev-vnet-8/subnets/abiels-dev-subnet-gateway-8"
+        }
+     }
+    },
+    nginx-public = {
+     service_name                    = "nginx-public"
+     image                           = "nginx"
+     image_version                   = "latest"
+     health_check_path               = "/"
+     health_check_max_ping_failures  = "2"
+     ip_restriction                  = {}
+     }
   }
   service_name                   = each.value.service_name
   image                          = each.value.image
   image_version                  = each.value.image_version
   health_check_path              = each.value.health_check_path
   health_check_max_ping_failures = each.value.health_check_max_ping_failures
+  ip_restriction                 = each.value.ip_restriction
   resource_group_name            = var.resource_group_name
   location                       = var.location
   prefix                         = var.prefix
+}
+
+module "application_gateway" {
+  source        = "./application-gateway"
+  vnet_name     = "abiels-dev-vnet-8"
+  subnet_name   = "abiels-dev-subnet-gateway-8"
+  app_gw_name   = "demo1"
+  sku_name      = "Standard_v2"
+  tier_name     = "Standard_v2"
+  sku_capacity  = 1
+  frontend_port = 80
+  backend_address_pools = [
+    {
+      name  = "nginx"
+      fqdns = ["abiels-dev-app-service-nginx-493.azurewebsites.net"]
+    },
+    {
+      name  = "getting-started"
+      fqdns = ["abiels-dev-app-service-getting-started-250.azurewebsites.net"]
+    }
+  ]
+  backend_http_settings = [
+    {
+      name                                = "listener_http_80"
+      path                                = "/"
+      port                                = 80
+      request_timeout                     = 30
+      cookie_based_affinity               = "Disabled"
+      probe_name                          = "http_80"
+      protocol                            = "Http"
+      pick_host_name_from_backend_address = true
+    }
+  ]
+  request_routing_rule = [
+    {
+      http_listener_name = "appgw-demo1-http_listener"
+      name               = "Path_Based_Rules"
+      rule_type          = "PathBasedRouting"
+      url_path_map_name  = "Path_Based"
+    }
+  ]
+  url_path_maps = [
+    {
+      name                               = "Path_Based"
+      default_backend_address_pool_name  = "getting-started"
+      default_backend_http_settings_name = "listener_http_80"
+
+      path_rules = [{
+        backend_address_pool_name  = "getting-started"
+        backend_http_settings_name = "listener_http_80"
+        name                       = "getting-starred"
+        paths = [
+          "/getting-starred",
+          "/tutorial",
+        ]
+    },
+    {
+        backend_address_pool_name  = "nginx"
+        backend_http_settings_name = "listener_http_80"
+        name                       = "nginx"
+        paths = [
+         "/nginx/",
+        ]
+    },
+    {
+        backend_address_pool_name  = "nginx"
+        backend_http_settings_name = "listener_http_80"
+        name                       = "nginx2"
+        paths = [
+          "/nginx2/",
+        ]
+    }]
+    }
+  ]
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  prefix              = var.prefix
+  public_ip_number    = random_integer.public_ip.id
+  app_gw_number       = random_integer.app_gw.id
+  depends_on = [
+    module.virtual-network,
+    module.app-service
+  ]
 }
