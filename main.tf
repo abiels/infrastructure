@@ -94,11 +94,21 @@ resource "random_password" "password" {
   override_special = "%@!"
 }
 
+resource "azurerm_app_service_plan" "default" {
+  name                = format("%s-%s-app-service-plan-%s", var.prefix, terraform.workspace, random_integer.app_service_plan.id)
+  kind                = "Linux"
+  reserved            = true
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  sku {
+    tier = var.azurerm_app_service_sku_tier
+    size = var.azurerm_app_service_sku_size
+  }
+}
+
 module "app-service" {
   source                         = "./app-service"
-  app_plan_name                  = "StandardS1"
-  sku_tier                       = "Standard"
-  sku_size                       = "S1"
+  app_service_plan_id            = azurerm_app_service_plan.default.id
   services = {
     nginx = {service_name            = "nginx"
      image                           = "nginx"
@@ -112,7 +122,6 @@ module "app-service" {
      health_check_max_ping_failures  = "2" 
     }
   }
-
   resource_group_name            = var.resource_group_name
   location                       = var.location
   prefix                         = var.prefix

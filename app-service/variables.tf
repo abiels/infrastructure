@@ -7,13 +7,7 @@ variable "location" {
 variable "prefix" {
   type = string
 }
-variable "app_plan_name" {
-  type = string
-}
-variable "sku_tier" {
-  type = string
-}
-variable "sku_size" {
+variable "app_service_plan_id" {
   type = string
 }
 variable "services" {
