@@ -29,13 +29,27 @@ module "resource-groups" {
   location            = var.location
 }
 
-module "virtual-network" {
-  source              = "./virtual-network"
+resource "azurerm_virtual_network" "main" {
+  name                = format("%s-%s-vnet-%s", var.prefix, terraform.workspace, var.virtual_network_name)
   resource_group_name = var.resource_group_name
   location            = var.location
-  prefix              = var.prefix
-  vnet_address_space  = var.vnet_address_space
-  subnets             = var.subnets
+  address_space       = [var.vnet_address_space]
+}
+
+module "virtual-subnet" {
+  source               = "./virtual-subnet"
+  virtual_network_name = azurerm_virtual_network.main.name
+  resource_group_name  = var.resource_group_name
+  location             = var.location
+  prefix               = var.prefix
+  vnet_address_space   = var.vnet_address_space
+  for_each             = var.subnets
+  name                 = each.value.name
+  addr_range           = each.value.addr_range
+  service_endpoints    = each.value.service_endpoints
+  depends_on = [
+    azurerm_virtual_network.main
+  ]
 }
 
 module "postgresql_development" {
