@@ -13,12 +13,7 @@ resource "azurerm_public_ip" "public_ip" {
   sku                 = "Standard"
 }
 
-data "azurerm_subnet" "subnet" {
-  name                 = var.subnet_name
-  virtual_network_name = var.vnet_name
-  resource_group_name  = var.resource_group_name
-}
-resource "azurerm_application_gateway" "network" {
+resource "azurerm_application_gateway" "main" {
   name                = format("%s-%s-app-gw-%s-%s", var.prefix, terraform.workspace, var.app_gw_name, var.app_gw_number)
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -31,7 +26,7 @@ resource "azurerm_application_gateway" "network" {
 
   gateway_ip_configuration {
     name      = local.gateway_ip_configuration_name
-    subnet_id = data.azurerm_subnet.subnet.id
+    subnet_id = var.subnet_id
   }
 
   frontend_ip_configuration {

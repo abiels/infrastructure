@@ -29,13 +29,27 @@ module "resource-groups" {
   location            = var.location
 }
 
-module "virtual-network" {
-  source              = "./virtual-network"
+resource "azurerm_virtual_network" "main" {
+  name                = format("%s-%s-vnet-%s", var.prefix, terraform.workspace, var.virtual_network_name)
   resource_group_name = var.resource_group_name
   location            = var.location
-  prefix              = var.prefix
-  vnet_address_space  = var.vnet_address_space
-  subnets             = var.subnets
+  address_space       = [var.vnet_address_space]
+}
+
+module "virtual-subnet" {
+  source               = "./virtual-subnet"
+  virtual_network_name = azurerm_virtual_network.main.name
+  resource_group_name  = var.resource_group_name
+  location             = var.location
+  prefix               = var.prefix
+  vnet_address_space   = var.vnet_address_space
+  for_each             = var.subnets
+  name                 = each.value.name
+  addr_range           = each.value.addr_range
+  service_endpoints    = each.value.service_endpoints
+  depends_on = [
+    azurerm_virtual_network.main
+  ]
 }
 
 module "postgresql_development" {
@@ -121,7 +135,7 @@ module "app-service" {
           priority                  = 100
           action                    = "Allow"
           name                      = "app-gw"
-          virtual_network_subnet_id = "/subscriptions/a0428382-057e-415e-b01f-0eb0d6b4fbc8/resourceGroups/abiels-dev-rg-001/providers/Microsoft.Network/virtualNetworks/abiels-dev-vnet-8/subnets/abiels-dev-subnet-gateway-8"
+          virtual_network_subnet_id = module.virtual-subnet["gateway"].subnet_id
         }
      }
      },
@@ -136,7 +150,7 @@ module "app-service" {
           priority                  = 100
           action                    = "Allow"
           name                      = "app-gw"
-          virtual_network_subnet_id = "/subscriptions/a0428382-057e-415e-b01f-0eb0d6b4fbc8/resourceGroups/abiels-dev-rg-001/providers/Microsoft.Network/virtualNetworks/abiels-dev-vnet-8/subnets/abiels-dev-subnet-gateway-8"
+          virtual_network_subnet_id = module.virtual-subnet["gateway"].subnet_id
         }
      }
     },
@@ -160,10 +174,10 @@ module "app-service" {
   prefix                         = var.prefix
 }
 
-module "application_gateway" {
+module "application-gateway" {
   source        = "./application-gateway"
-  vnet_name     = "abiels-dev-vnet-8"
-  subnet_name   = "abiels-dev-subnet-gateway-8"
+  vnet_name     = azurerm_virtual_network.main.name
+  subnet_id     = module.virtual-subnet["gateway"].subnet_id
   app_gw_name   = "demo1"
   sku_name      = "Standard_v2"
   tier_name     = "Standard_v2"
@@ -172,11 +186,11 @@ module "application_gateway" {
   backend_address_pools = [
     {
       name  = "nginx"
-      fqdns = ["abiels-dev-app-service-nginx-493.azurewebsites.net"]
+      fqdns = [module.app-service["nginx"].app_service_fqdns]
     },
     {
       name  = "getting-started"
-      fqdns = ["abiels-dev-app-service-getting-started-250.azurewebsites.net"]
+      fqdns = [module.app-service["getting-started"].app_service_fqdns]
     }
   ]
   backend_http_settings = [
@@ -238,7 +252,7 @@ module "application_gateway" {
   public_ip_number    = random_integer.public_ip.id
   app_gw_number       = random_integer.app_gw.id
   depends_on = [
-    module.virtual-network,
+    module.virtual-subnet,
     module.app-service
   ]
 }

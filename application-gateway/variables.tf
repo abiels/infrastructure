@@ -31,7 +31,7 @@ variable "app_gw_number" {
 variable "vnet_name" {
   type = string
 }
-variable "subnet_name" {
+variable "subnet_id" {
   type = string
 }
 variable "backend_address_pools" {
