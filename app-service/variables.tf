@@ -27,3 +27,12 @@ variable "health_check_max_ping_failures" {
   type = string
   default = "2"
 }
+variable "ip_restriction" {
+  type = map(object({
+          priority                  = string
+          action                    = string
+          name                      = string
+          virtual_network_subnet_id = string
+  }))
+  default = {}
+}

@@ -1,3 +1,6 @@
+variable "virtual_network_name" {
+  type = string
+}
 variable "resource_group_name" {
   type = string
 }
@@ -12,7 +15,8 @@ variable "vnet_address_space" {
 }
 variable "subnets" {
   type = map(object({
-    name       = string
-    addr_range = string
+    name              = string
+    addr_range        = string
+    service_endpoints = list(string)
   }))
 }

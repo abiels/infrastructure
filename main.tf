@@ -30,12 +30,13 @@ module "resource-groups" {
 }
 
 module "virtual-network" {
-  source              = "./virtual-network"
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  prefix              = var.prefix
-  vnet_address_space  = var.vnet_address_space
-  subnets             = var.subnets
+  source               = "./virtual-network"
+  virtual_network_name = var.virtual_network_name
+  resource_group_name  = var.resource_group_name
+  location             = var.location
+  prefix               = var.prefix
+  vnet_address_space   = var.vnet_address_space
+  subnets              = var.subnets
 }
 
 module "postgresql_development" {
@@ -115,20 +116,46 @@ module "app-service" {
      image                           = "nginx"
      image_version                   = "latest"
      health_check_path               = "/"
-     health_check_max_ping_failures  = "2"},
+     health_check_max_ping_failures  = "2"
+     ip_restriction                  = {
+        100 = {
+          priority                  = 100
+          action                    = "Allow"
+          name                      = "app-gw"
+          virtual_network_subnet_id = module.virtual-network.subnets[0].gateway.id
+        }
+     }
+     },
     getting-started = {
      service_name = "getting-started"
      image                           = "docker/getting-started"
      image_version                   = "latest"
      health_check_path               = "/"
-     health_check_max_ping_failures  = "2" 
-    }
+     health_check_max_ping_failures  = "2"
+     ip_restriction                  = {
+        100 = {
+          priority                  = 100
+          action                    = "Allow"
+          name                      = "app-gw"
+          virtual_network_subnet_id = module.virtual-network.subnets[0].gateway.id
+        }
+     }
+    },
+    nginx-public = {
+     service_name                    = "nginx-public"
+     image                           = "nginx"
+     image_version                   = "latest"
+     health_check_path               = "/"
+     health_check_max_ping_failures  = "2"
+     ip_restriction                  = {}
+     }
   }
   service_name                   = each.value.service_name
   image                          = each.value.image
   image_version                  = each.value.image_version
   health_check_path              = each.value.health_check_path
   health_check_max_ping_failures = each.value.health_check_max_ping_failures
+  ip_restriction                 = each.value.ip_restriction
   resource_group_name            = var.resource_group_name
   location                       = var.location
   prefix                         = var.prefix
