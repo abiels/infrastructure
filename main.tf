@@ -29,27 +29,14 @@ module "resource-groups" {
   location            = var.location
 }
 
-resource "azurerm_virtual_network" "main" {
-  name                = format("%s-%s-vnet-%s", var.prefix, terraform.workspace, var.virtual_network_name)
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  address_space       = [var.vnet_address_space]
-}
-
-module "virtual-subnet" {
-  source               = "./virtual-subnet"
-  virtual_network_name = azurerm_virtual_network.main.name
+module "virtual-network" {
+  source               = "./virtual-network"
+  virtual_network_name = var.virtual_network_name
   resource_group_name  = var.resource_group_name
   location             = var.location
   prefix               = var.prefix
   vnet_address_space   = var.vnet_address_space
-  for_each             = var.subnets
-  name                 = each.value.name
-  addr_range           = each.value.addr_range
-  service_endpoints    = each.value.service_endpoints
-  depends_on = [
-    azurerm_virtual_network.main
-  ]
+  subnets              = var.subnets
 }
 
 module "postgresql_development" {
@@ -135,7 +122,7 @@ module "app-service" {
           priority                  = 100
           action                    = "Allow"
           name                      = "app-gw"
-          virtual_network_subnet_id = module.virtual-subnet["gateway"].subnet_id
+          virtual_network_subnet_id = module.virtual-network.subnets[0].gateway.id
         }
      }
      },
@@ -150,7 +137,7 @@ module "app-service" {
           priority                  = 100
           action                    = "Allow"
           name                      = "app-gw"
-          virtual_network_subnet_id = module.virtual-subnet["gateway"].subnet_id
+          virtual_network_subnet_id = module.virtual-network.subnets[0].gateway.id
         }
      }
     },
