@@ -160,3 +160,86 @@ module "app-service" {
   location                       = var.location
   prefix                         = var.prefix
 }
+
+module "application-gateway" {
+  source        = "./application-gateway"
+  vnet_name     = module.virtual-network.subnets[0].gateway.virtual_network_name
+  subnet_id     = module.virtual-network.subnets[0].gateway.id
+  app_gw_name   = "demo1"
+  sku_name      = "Standard_v2"
+  tier_name     = "Standard_v2"
+  sku_capacity  = 1
+  frontend_port = 80
+  backend_address_pools = [
+    {
+      name  = "nginx"
+      fqdns = [module.app-service["nginx"].app_service_fqdns]
+    },
+    {
+      name  = "getting-started"
+      fqdns = [module.app-service["getting-started"].app_service_fqdns]
+    }
+  ]
+  backend_http_settings = [
+    {
+      name                                = "listener_http_80"
+      path                                = "/"
+      port                                = 80
+      request_timeout                     = 30
+      cookie_based_affinity               = "Disabled"
+      probe_name                          = "http_80"
+      protocol                            = "Http"
+      pick_host_name_from_backend_address = true
+    }
+  ]
+  request_routing_rule = [
+    {
+      http_listener_name = "appgw-demo1-http_listener"
+      name               = "Path_Based_Rules"
+      rule_type          = "PathBasedRouting"
+      url_path_map_name  = "Path_Based"
+    }
+  ]
+  url_path_maps = [
+    {
+      name                               = "Path_Based"
+      default_backend_address_pool_name  = "getting-started"
+      default_backend_http_settings_name = "listener_http_80"
+
+      path_rules = [{
+        backend_address_pool_name  = "getting-started"
+        backend_http_settings_name = "listener_http_80"
+        name                       = "getting-starred"
+        paths = [
+          "/getting-starred",
+          "/tutorial",
+        ]
+    },
+    {
+        backend_address_pool_name  = "nginx"
+        backend_http_settings_name = "listener_http_80"
+        name                       = "nginx"
+        paths = [
+         "/nginx/",
+        ]
+    },
+    {
+        backend_address_pool_name  = "nginx"
+        backend_http_settings_name = "listener_http_80"
+        name                       = "nginx2"
+        paths = [
+          "/nginx2/",
+        ]
+    }]
+    }
+  ]
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  prefix              = var.prefix
+  public_ip_number    = random_integer.public_ip.id
+  app_gw_number       = random_integer.app_gw.id
+  depends_on = [
+    module.virtual-network,
+    module.app-service
+  ]
+}
